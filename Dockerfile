@@ -1,10 +1,18 @@
-FROM node:carbon
-# Create app directory
+# base image
+FROM node:9.6.1
+
+# set working directory
+RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
-RUN npm install
-EXPOSE 3002
-CMD [ "npm", "start" ]
+
+# add `/usr/src/app/node_modules/.bin` to $PATH
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
+
+# install and cache app dependencies
+COPY package.json /usr/src/app/package.json
+RUN npm install --silent
+RUN npm install react-scripts@1.1.1 -g --silent
+#RUN npm install whatwg-fetch --save
+
+# start app
+CMD ["npm", "start"]
